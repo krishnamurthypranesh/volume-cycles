@@ -2,7 +2,9 @@ import csv
 import typing
 import logging
 
-class CSVSerializer:
+from serializers.base import Serializer
+
+class CsvSerializer(Serializer):
     def __init__(self, logger: logging.Logger):
         self.logger = logger
 
