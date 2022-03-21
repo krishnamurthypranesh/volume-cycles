@@ -1,11 +1,27 @@
+import logging
 import argparse
 
-from programme.base import Programme
+from programme.base import ProgrammeGenerator
+from serializers import JsonSerializer, CsvSerializer
+from generators import VolumeCycleGenerator
 
-def main():
-    pass
+# test input
+filename: str = 'test.json'
+
 
 if __name__ == '__main__':
-    programme = Programme()
+    logger = logging.getLogger(__name__)
 
-    programme.generate_cycle()
+    json_serializer = JsonSerializer(logger)
+    csv_serializer = CsvSerializer(logger)
+
+    generator = VolumeCycleGenerator(logger, csv_serializer)
+
+    programme_generator = ProgrammeGenerator(
+            json_serializer,
+            filename,
+            generator,
+    )
+
+    value = programme_generator.generate_cycle()
+    print(value)
