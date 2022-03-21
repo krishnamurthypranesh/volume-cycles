@@ -1,7 +1,8 @@
 import abc
 import typing
 
-from generators.base import CycleGenerator
+from generators import BaseCycleGenerator
+from serializers import JsonSerializer, CsvSerializer
 
 class Base:
     @abc.abstractclassmethod
@@ -11,10 +12,15 @@ class Base:
 
 
 class ProgrammeGenerator(Base):
-    def __init__(self, conditions: typing.Dict,
-            volume_cycle_generator: CycleGenerator):
-        self.conditions = conditions
-        self.volume_cycle_generator = volume_cycle_generator
+    def __init__(self, serializer: JsonSerializer, config_file: str,
+            generator: BaseCycleGenerator):
+        self.cycle_generator = generator
+        self.serializer = serializer
+        self.exercises = self.serializer.unmarshal(config_file)
+
 
     def validate_starting_conditions(self):
         return True
+
+    def generate_cycle(self):
+        return self.cycle_generator.generate(self.exercises)
