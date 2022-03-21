@@ -2,15 +2,15 @@ import time
 import typing
 import datetime
 
-from models import base, exercise, session
+from models.base import Base
 
-class ExerciseSession(base.Base):
+class ExerciseSession(Base):
     def __init__(self, timestamp: int, exercise: str,
             equipment: str, mass: int, set_count: int,
             set_duration: int, reps_per_set: int,
             rest_duration: int):
-        self.timestmap = timestamp
-        self.date = int(datetime.datetime.fromtimestamp(timestamp))
+        self.timestamp = timestamp
+        self.date = datetime.datetime.fromtimestamp(timestamp)
         self.day = time.strftime('%A', time.localtime(timestamp))
         self.exercise = exercise
         self.equipment = equipment
