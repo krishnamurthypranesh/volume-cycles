@@ -1,33 +1,28 @@
 import time
 import typing
-from datetime import datetime
+import datetime
 
 from models.base import Base
 
-
 class Session(Base):
-    def __init__(self, timestamp: int,
-            exerciseSessions: typing.Dict):
-        self.exercises = exerciseSessions
+    def __init__(self, timestamp: int, exercise: str,
+            equipment: str, mass: int, set_count: int,
+            set_duration: int, reps_per_set: int,
+            rest_duration: int):
         self.timestamp = timestamp
+        self.date = datetime.datetime.fromtimestamp(timestamp)
+        self.day = time.strftime('%A', time.localtime(timestamp))
+        self.exercise = exercise
+        self.equipment = equipment
+        self.mass = mass
+        self.set_count = set_count
+        self.set_duration = set_duration
+        self.reps_per_set = reps_per_set
+        self.rest_duration = rest_duration
 
-        self.date = timestamp
-        self.day = timestamp
+        self.calculate_work_capacity()
 
-    @property
-    def date(self):
-        return self._date
 
-    @property
-    def day(self):
-        return self._day
-
-    @date.setter
-    def date(self, timestamp: int):
-        value = str(datetime.fromtimestamp(timestamp))
-        self._date = value
-
-    @day.setter
-    def day(self, timestamp: int):
-        value = time.strftime('%A', time.localtime(timestamp))
-        self._day = value
+    def calculate_work_capacity(self):
+        self.work_capacity = self.reps_per_set * self.set_count * self.mass
+        return self.work_capacity
