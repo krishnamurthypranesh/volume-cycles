@@ -22,6 +22,13 @@ class Session(Base):
 
         self.calculate_work_capacity()
 
+    def __repr__(self):
+        rpr = {k:v for k, v in self.__dict__.items() if not k.startswith('__')}
+        return f'{rpr}'
+
+    def __str__(self):
+        rpr = {k:v for k, v in self.__dict__.items() if not k.startswith('__')}
+        return f'{rpr}'
 
     def calculate_work_capacity(self):
         self.work_capacity = self.reps_per_set * self.set_count * self.mass

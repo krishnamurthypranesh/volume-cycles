@@ -39,4 +39,8 @@ class VolumeCycleProgrammeGeneratorResource(metaclass=BaseResource):
             )
         volume_cycle_init_conditions.exercises_input = exercises_input
 
-        return self.cycle_generator.generate(volume_cycle_init_conditions)
+        cycle = self.cycle_generator.generate(volume_cycle_init_conditions)
+        import pdb; pdb.set_trace()
+
+        return cycle
+

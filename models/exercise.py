@@ -22,3 +22,11 @@ class Exercise(Base):
         self.increment_step = increment_step
 
         self.days = days
+
+    def __repr__(self):
+        rpr = {k:v for k, v in self.__dict__.items() if not k.startswith('__')}
+        return f'{rpr}'
+
+    def __str__(self):
+        rpr = {k:v for k, v in self.__dict__.items() if not k.startswith('__')}
+        return f'{rpr}'
