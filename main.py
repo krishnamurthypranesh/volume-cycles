@@ -1,27 +1,31 @@
 import logging
 import argparse
 
-from programme.base import ProgrammeGenerator
-from serializers import JsonSerializer, CsvSerializer
-from generators import VolumeCycleGenerator
+from usecase import VolumeCycleGeneratorUseCase
+from repository import file as fileRepo
+from resource import VolumeCycleProgrammeGeneratorResource
 
 # test input
 filename: str = 'test.json'
+programme_type: str = 'volume_cycle'
 
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
-    json_serializer = JsonSerializer(logger)
-    csv_serializer = CsvSerializer(logger)
+    json_serializer = fileRepo.JsonSerializer(logger)
+    csv_serializer = fileRepo.CsvSerializer(logger)
 
-    generator = VolumeCycleGenerator(logger, csv_serializer)
+    volume_cycle_generator_usecase = VolumeCycleGeneratorUseCase(logger)
 
-    programme_generator = ProgrammeGenerator(
-            json_serializer,
+    volume_cycle_programme_generator = VolumeCycleProgrammeGeneratorResource(
             filename,
-            generator,
+            csv_serializer,
+            json_serializer,
+            volume_cycle_generator_usecase,
     )
 
-    value = programme_generator.generate_cycle()
+    if programme_type == 'volume_cycle':
+        value = volume_cycle_programme_generator.generate_cycle()
+
     print(value)
