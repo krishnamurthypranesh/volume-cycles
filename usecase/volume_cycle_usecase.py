@@ -95,35 +95,50 @@ class VolumeCycleGeneratorUseCase(metaclass=BaseUseCase):
             return InvalidInitConditionsException(
             'Invalid starting conditions provided!')
 
-        for exercise in init_conditions.exercises_input:
+        exercises: typing.List[models.Exercise] = []
+
+        for exercise_input in init_conditions.exercises_input:
             epoch: int = init_conditions.start_timestamp
+
+            exercise: models.Exercise = (models.Exercise.
+                    from_dict(exercise_input.__dict__))
+
+            exercises.append(exercise)
 
             epochs: typing.List[int] = self._get_exercise_schedule(
                         init_conditions.start_timestamp,
                         init_conditions.end_timestamp,
-                        exercise.days,
+                        exercise_input.days,
                     )
 
             for idx in range(len(epochs)):
                 curr_epoch: int = epochs[idx]
 
-                start: int = max([0, idx - exercise.increment_frequency])
+                start: int = max([0, idx - exercise_input.increment_frequency])
                 end: int = max([0, idx])
 
                 prev_epochs: typing.List[int] = epochs[start:end]
 
-                set_count: int = self._calculate_set_count(exercise, epoch,
-                        prev_epochs)
+                set_count: int = self._calculate_set_count(exercise_input,
+                        epoch, prev_epochs)
                 session: models.Session = models.Session(
-                            exercise=exercise.name,
+                            exercise=exercise_input.name,
                             timestamp=curr_epoch,
-                            equipment=exercise.equipment,
-                            mass=exercise.mass,
+                            equipment=exercise_input.equipment,
+                            mass=exercise_input.mass,
                             set_count=set_count,
-                            reps_per_set=exercise.reps_per_set,
-                            set_duration=exercise.set_duration,
-                            rest_duration=exercise.rest_duration,
+                            reps_per_set=exercise_input.reps_per_set,
+                            set_duration=exercise_input.set_duration,
+                            rest_duration=exercise_input.rest_duration,
                         )
                 self._add_exercise_session_details(session)
 
-        return self.sessions
+
+        programme: models.Programme = models.Programme(
+                start_timestamp=init_conditions.start_timestamp,
+                end_timestamp=init_conditions.end_timestamp,
+                exercises=exercises,
+                sessions=self.sessions,
+        )
+
+        return programme
