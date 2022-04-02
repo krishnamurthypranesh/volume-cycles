@@ -1,13 +1,18 @@
 import time
-from datetime import datetime
 import typing
+from datetime import datetime
 
-from models import Base, Exercise
+from models import Base, Exercise, Session
 
 class Programme(Base):
-    def __init__(self, start_date: str, end_date: str,
-            exercises: typing.List[Exercise]):
+    def __init__(self, start_timestamp: int,
+            end_timestamp: int,
+            exercises: typing.List[Exercise],
+            sessions: typing.List[Session]):
+        self._start_timestamp = start_timestamp
+        self._end_timestamp = end_timestamp
         self.exercises = exercises
+        self.sessions = sessions
 
     @property
     def start_timestamp(self):
@@ -18,19 +23,17 @@ class Programme(Base):
         return self._end_timestamp
 
     @start_timestamp.setter
-    def start_timestamp(self, date: str):
-        value = int(datetime.fromtimestamp(
-                    time.mktime(
-                            time.strptime(date, '%Y-%m-%d')
-                        )
-                ).timestamp())
-        self._start_timestamp = value
+    def start_timestamp(self, ts: int):
+        self._start_timestamp = ts 
 
     @end_timestamp.setter
-    def end_timestamp(self, date: str):
-        value = int(datetime.fromtimestamp(
-                    time.mktime(
-                            time.strptime(date, '%Y-%m-%d')
-                        )
-                ).timestamp())
-        self._end_timestamp = value
+    def end_timestamp(self, ts: int):
+        self._end_timestamp = ts
+
+    def get_start_date(self):
+        date = datetime.fromtimestamp(self.start_timestamp)
+        return str(date.date())
+
+    def get_end_date(self):
+        date = datetime.fromtimestamp(self.end_timestamp)
+        return str(date.date())

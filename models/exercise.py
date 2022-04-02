@@ -5,23 +5,24 @@ from datetime import datetime
 from models.base import Base
 
 class Exercise(Base):
-    def __init__(self, name: str, start_date: str, end_date: str,
-            starting_set_count: int, equipment: str, mass: int,
-            unilateral: bool, reps_per_set: int, rest_duration: int,
-            set_duration: int, increment_period: int, increment_frequency: int,
-            increment_step: int, days: typing.List[str]):
-        self.name = name
-        self.starting_set_count = starting_set_count
-        self.equipment = equipment
-        self.unilateral = unilateral
-        self.reps_per_set = reps_per_set
-        self.rest_duration = rest_duration
-        self.set_duration = set_duration
-        self.increment_period = increment_period
-        self.increment_frequency = increment_frequency
-        self.increment_step = increment_step
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
-        self.days = days
+    @classmethod
+    def from_dict(self, _dict: typing.Dict):
+        exercise = Exercise(
+            name=_dict['name'],
+            starting_set_count=_dict['starting_set_count'],
+            equipment=_dict['equipment'],
+            unilateral=_dict['unilateral'],
+            reps_per_set=_dict['reps_per_set'],
+            rest_duration=_dict['rest_duration'],
+            set_duration=_dict['set_duration'],
+            increment_period=_dict['increment_period'],
+            increment_frequency=_dict['increment_frequency'],
+            increment_step=_dict['increment_step'],
+            days=_dict['days'],
+        )
 
     def __repr__(self):
         rpr = {k:v for k, v in self.__dict__.items() if not k.startswith('__')}
