@@ -11,9 +11,11 @@ class VolumeCycleProgrammeGeneratorResource(metaclass=BaseResource):
             init_file: str,
             csv_repo: file.BaseFileRepo,
             json_repo: file.BaseFileRepo,
-            generator: BaseUseCase):
+            volume_cycle_generator: BaseUseCase,
+            pdf_generator: BaseUseCase):
 
-        self.cycle_generator = generator
+        self.volume_cycle_generator = volume_cycle_generator
+        self.pdf_generator = pdf_generator
         self.init_file = init_file
         self.json_repo = json_repo
         self.csv_repo = csv_repo
@@ -39,8 +41,9 @@ class VolumeCycleProgrammeGeneratorResource(metaclass=BaseResource):
             )
         volume_cycle_init_conditions.exercises_input = exercises_input
 
-        cycle = self.cycle_generator.generate(volume_cycle_init_conditions)
-        import pdb; pdb.set_trace()
+        cycle = self.volume_cycle_generator.generate(volume_cycle_init_conditions)
+
+        self.pdf_generator.generate(cycle)
 
         return cycle
 

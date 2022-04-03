@@ -1,9 +1,9 @@
 import logging
 import argparse
 
-from usecase import VolumeCycleGeneratorUseCase
 from repository import file as fileRepo
 from resource import VolumeCycleProgrammeGeneratorResource
+from usecase import VolumeCycleGeneratorUseCase, GenerateCyclePdfUsecase
 
 # test input
 filename: str = 'test.json'
@@ -17,12 +17,14 @@ if __name__ == '__main__':
     csv_serializer = fileRepo.CsvSerializer(logger)
 
     volume_cycle_generator_usecase = VolumeCycleGeneratorUseCase(logger)
+    pdf_generator_usecase = GenerateCyclePdfUsecase(logger)
 
     volume_cycle_programme_generator = VolumeCycleProgrammeGeneratorResource(
             filename,
             csv_serializer,
             json_serializer,
             volume_cycle_generator_usecase,
+            pdf_generator_usecase,
     )
 
     if programme_type == 'volume_cycle':
