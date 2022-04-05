@@ -1,6 +1,7 @@
 import logging
 import argparse
 
+from config import AppConfig 
 from repository import file as fileRepo
 from resource import VolumeCycleProgrammeGeneratorResource
 from usecase import VolumeCycleGeneratorUseCase, GenerateCyclePdfUsecase
@@ -13,11 +14,18 @@ programme_type: str = 'volume_cycle'
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
-    json_serializer = fileRepo.JsonSerializer(logger)
+    json_serializer = fileRepo.JsonSerializer(
+                logger,
+                AppConfig.DATA_DIR,
+                AppConfig.OUTPUT_DIR,
+            )
     csv_serializer = fileRepo.CsvSerializer(logger)
 
     volume_cycle_generator_usecase = VolumeCycleGeneratorUseCase(logger)
-    pdf_generator_usecase = GenerateCyclePdfUsecase(logger)
+    pdf_generator_usecase = GenerateCyclePdfUsecase(
+                logger,
+                AppConfig.OUTPUT_DIR,
+            )
 
     volume_cycle_programme_generator = VolumeCycleProgrammeGeneratorResource(
             filename,

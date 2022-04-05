@@ -1,14 +1,4 @@
-"""
-- get a cycle
-- create an empty canvas
-- create the first page
-    - add a table listing the exercises performed on each day of the week
-    - if a day has no exercises, then mark that as a rest day
-- After the first page
-- For each timestamp, get the date, day and other bits of information
-- For each exercise that needs to be performed on that day, add the session
-  details
-"""
+import os
 import time
 import uuid
 import typing
@@ -22,13 +12,18 @@ import models
 from usecase import BaseUseCase
 
 class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
-    def __init__(self, logger: logging.Logger):
+    def __init__(self, logger: logging.Logger,
+            output_dir: str):
         self.logger = logger
+        self.output_dir = output_dir
         self.elements = []
 
     def _init_pdf(self):
         #TODO: move folder to constants
-        filename: str = f'generated/{uuid.uuid1()}.pdf'
+        filename: str = os.path.join(
+                    self.output_dir,
+                    f'{uuid.uuid1()}.pdf',
+                ) 
         doc = platypus.SimpleDocTemplate(filename,
                 pagesize=pagesizes.landscape(pagesizes.A4))
 
