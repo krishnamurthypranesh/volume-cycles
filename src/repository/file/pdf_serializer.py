@@ -33,8 +33,10 @@ class PdfSerializer(metaclass=BaseFileRepo):
         return doc
 
 
-    def generate_table(self, elements: typing.List[typing.Any],
-            data: typing.List[typing.Any], with_page_break: bool = True):
+    def generate_table(self, data: typing.List[typing.Any],
+            with_page_break: bool = True):
+        elements: typing.List[typing.Any] = list()
+
         table = platypus.Table(data,
                     colWidths=3*0.4*pagesizes.inch,
                     rowHeights=2*0.4*pagesizes.inch,
@@ -49,3 +51,27 @@ class PdfSerializer(metaclass=BaseFileRepo):
             elements.append(platypus.PageBreak())
 
         return elements
+
+
+    def right_align_text(self, text: str) -> styles.ParagraphStyle:
+        style: typing.Any = styles.ParagraphStyle(
+                    name='text',
+                    parent=None,
+                    alignment=enums.TA_RIGHT,
+                )
+        element: typing.Any = platypus.Paragraph(text, style=style)
+
+        return element
+
+
+    def left_align_text(self, text: str) -> styles.ParagraphStyle:
+        style: typing.Any = styles.ParagraphStyle(
+                    name='text',
+                    parent=None,
+                    alignment=enums.TA_LEFT,
+                )
+        element: typing.Any = platypus.Paragraph(text, style=style)
+
+        return element
+
+
