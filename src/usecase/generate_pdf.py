@@ -10,12 +10,15 @@ from reportlab.lib import colors, pagesizes, styles, enums
 
 import models
 from usecase import BaseUseCase
+from repository.file import PdfSerializer
 
 class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
     def __init__(self, logger: logging.Logger,
-            output_dir: str):
+            output_dir: str,
+            pdf_serializer: PdfSerializer,):
         self.logger = logger
         self.output_dir = output_dir
+        self.pdf_serializer = pdf_serializer
         self.elements = []
 
     def _init_pdf(self):
@@ -23,7 +26,7 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
         filename: str = os.path.join(
                     self.output_dir,
                     f'{uuid.uuid1()}.pdf',
-                ) 
+                )
         doc = platypus.SimpleDocTemplate(filename,
                 pagesize=pagesizes.landscape(pagesizes.A4))
 
@@ -43,6 +46,7 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
                     'Work Capacity',
                 ]
         return page_headers
+
 
     def generate_first_page(self, cycle: models.Programme):
         programme_days: typing.Dict = {}
@@ -86,68 +90,37 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
             rows.append(row)
             dex_idx += 1
 
-        t = platypus.Table(rows,
-                colWidths=3*(0.4*pagesizes.inch),
-                rowHeights=2*(0.4*pagesizes.inch),
+        self.elements.extend(self.
+                pdf_serializer.
+                generate_table(self.elements, rows, True)
             )
-
-        t.setStyle([('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-            ])
-
-        self.elements.append(t)
-        self.elements.append(platypus.PageBreak())
 
 
     def prepare_page(self, timestamp: int, rows: typing.List[typing.Any]):
         sheet_date: str = str(datetime.fromtimestamp(timestamp).date())
         sheet_day: str = time.strftime("%A", time.localtime(timestamp))
 
-        _style: typing.Any = styles.ParagraphStyle(
-                    name='sheet_date_element',
-                    parent=None,
-                    alignment=enums.TA_LEFT,
-                )
-        sheet_date_element: typing.Any = platypus.Paragraph(
-                    f'Date: {sheet_date}',
-                    style=_style,
+        sheet_date_element: typing.Any = self.pdf_serializer.left_align_text(
+                f'Date: {sheet_date}')
+        sheet_day_element: typing.Any = self.pdf_serializer.right_align_text(
+                    f'Day: {sheet_day}')
+
+        page_header_table = self.pdf_serializer.generate_table(
+                    [[sheet_date_element, sheet_day_element]],
+                    False,
                 )
 
-        _style: typing.Any = styles.ParagraphStyle(
-                    name='sheet_day_element',
-                    parent=None,
-                    alignment=enums.TA_RIGHT,
-                )
-        sheet_day_element: typing.Any = platypus.Paragraph(
-                    f'Day: {sheet_day}',
-                    style=_style,
-                )
+        data_table = self.pdf_serializer.generate_table(rows, True)
 
-        page_data = [
-                    [sheet_date_element, sheet_day_element,]
-                ]
-        page_data_table = platypus.Table(
-                    page_data,
-                )
-
-        _table = platypus.Table(rows,
-                colWidths=3*(0.4*pagesizes.inch),
-                rowHeights=(2*(0.4*pagesizes.inch)),
-            )
-        _table.setStyle([('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-            ])
-
-        self.elements.append(page_data_table)
-        self.elements.append(_table)
-        self.elements.append(platypus.PageBreak())
+        self.elements.append(page_header_table)
+        self.elements.extend(data_table)
 
 
     def build_pdf(self):
         self.doc.build(self.elements)
 
     def generate(self, cycle: models.Programme):
-        self._init_pdf()
+        self.pdf_serializer.init_pdf('')
         self.generate_first_page(cycle)
 
         key_ordering: typing.List[str] = [
