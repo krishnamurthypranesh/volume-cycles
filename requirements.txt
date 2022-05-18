@@ -1,7 +1,9 @@
 astroid==2.9.3
 isort==5.10.1
+jedi==0.18.1
 lazy-object-proxy==1.7.1
 mccabe==0.6.1
+parso==0.8.3
 Pillow==9.1.0
 platformdirs==2.5.1
 pylint==2.12.2

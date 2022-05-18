@@ -20,11 +20,13 @@ if __name__ == '__main__':
                 AppConfig.OUTPUT_DIR,
             )
     csv_serializer = fileRepo.CsvSerializer(logger)
+    pdf_serializer = fileRepo.PdfSerializer(logger, AppConfig.OUTPUT_DIR)
 
     volume_cycle_generator_usecase = VolumeCycleGeneratorUseCase(logger)
     pdf_generator_usecase = GenerateCyclePdfUsecase(
                 logger,
                 AppConfig.OUTPUT_DIR,
+                pdf_serializer,
             )
 
     volume_cycle_programme_generator = VolumeCycleProgrammeGeneratorResource(
