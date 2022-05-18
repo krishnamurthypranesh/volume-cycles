@@ -63,7 +63,6 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
         # to be completely filled out before a moving onto the next one,
         # we find out the maximum number of rows that need to be filled out so
         # that this can be iterated on a at a later point in time.
-        import pdb; pdb.set_trace()
         for k in sessions.keys():
             day: str = time.strftime("%A", time.localtime(int(k)))
             if programme_days.get(day) is not None:
@@ -72,7 +71,7 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
                         programme_days[day].append(e)
 
             else:
-                programme_days[day] = [k,]
+                programme_days[day] = [v for v in sessions[k].keys()]
 
             if len(programme_days[day]) > dex_max:
                 dex_max = len(programme_days[day])
@@ -87,7 +86,6 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
                     'Sunday',
                 ]
 
-        import pdb; pdb.set_trace()
         rows = [days,]
         dex_idx: int = 0
         while dex_idx < dex_max:
