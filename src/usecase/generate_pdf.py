@@ -49,11 +49,21 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
 
 
     def generate_first_page(self, cycle: models.Programme):
+        """
+        Builds the first page of the PDF. Check the sample pdf for the format
+        of the generated pdf.
+
+        """
         programme_days: typing.Dict = {}
         dex_max: int = 0
 
         sessions = cycle.sessions
 
+        # since the pdf has to be populated in a row first format i.e., a row has
+        # to be completely filled out before a moving onto the next one,
+        # we find out the maximum number of rows that need to be filled out so
+        # that this can be iterated on a at a later point in time.
+        import pdb; pdb.set_trace()
         for k in sessions.keys():
             day: str = time.strftime("%A", time.localtime(int(k)))
             if programme_days.get(day) is not None:
@@ -61,10 +71,11 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
                     if not e in programme_days[day]:
                         programme_days[day].append(e)
 
-                        if len(programme_days[day]) > dex_max:
-                            dex_max = len(programme_days[day])
             else:
-                programme_days[day] = list()
+                programme_days[day] = [k,]
+
+            if len(programme_days[day]) > dex_max:
+                dex_max = len(programme_days[day])
 
         days: typing.List[str] = [
                     'Monday',
@@ -76,6 +87,7 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
                     'Sunday',
                 ]
 
+        import pdb; pdb.set_trace()
         rows = [days,]
         dex_idx: int = 0
         while dex_idx < dex_max:
@@ -90,10 +102,9 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
             rows.append(row)
             dex_idx += 1
 
-        self.elements.extend(self.
-                pdf_serializer.
-                generate_table(self.elements, rows, True)
-            )
+        table = self.pdf_serializer.generate_table_with_cell_constraints(rows, True)
+        self.elements.append(table)
+        self.elements.append(self.pdf_serializer.get_page_break())
 
 
     def prepare_page(self, timestamp: int, rows: typing.List[typing.Any]):
@@ -103,24 +114,27 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
         sheet_date_element: typing.Any = self.pdf_serializer.left_align_text(
                 f'Date: {sheet_date}')
         sheet_day_element: typing.Any = self.pdf_serializer.right_align_text(
-                    f'Day: {sheet_day}')
+                f'Day: {sheet_day}')
 
-        page_header_table = self.pdf_serializer.generate_table(
+        page_header_table = (self.pdf_serializer.
+                generate_table_without_cell_constraints(
                     [[sheet_date_element, sheet_day_element]],
                     False,
                 )
+            )
 
-        data_table = self.pdf_serializer.generate_table(rows, True)
+        data_table = self.pdf_serializer.generate_table_with_cell_constraints(rows, True)
 
         self.elements.append(page_header_table)
-        self.elements.extend(data_table)
+        self.elements.append(data_table)
+        self.elements.append(self.pdf_serializer.get_page_break())
 
 
     def build_pdf(self):
         self.doc.build(self.elements)
 
     def generate(self, cycle: models.Programme):
-        self.pdf_serializer.init_pdf('')
+        self.pdf_serializer.init_pdf('test.pdf')
         self.generate_first_page(cycle)
 
         key_ordering: typing.List[str] = [
@@ -156,4 +170,6 @@ class GenerateCyclePdfUsecase(metaclass=BaseUseCase):
 
             self.prepare_page(ts, rows)
 
-        self.build_pdf()
+        pdf_saved: bool = self.pdf_serializer.build_pdf(self.elements)
+        if pdf_saved:
+            print(f'pdf saved to location {self.pdf_serializer.doc.filename}')
