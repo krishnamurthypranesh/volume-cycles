@@ -1,0 +1,54 @@
+{
+    "start_date": "2022-03-28",
+    "end_date": "2022-03-30",
+    "exercises": [
+        {
+            "name": "Clean and Press",
+            "start_date": "2022-03-28",
+            "end_date": "2022-03-30",
+            "starting_set_count": 3,
+            "equipment": "Kettlebell",
+            "mass": 16,
+            "unilateral": true,
+            "reps_per_set": 5,
+            "set_duration": null,
+            "rest_duration": 60,
+            "increment_period": 86400,
+            "increment_frequency": 2,
+            "increment_step": 1,
+            "days": ["Monday", "Thursday"]
+        },
+        {
+            "name": "TGU",
+            "start_date": "2022-03-28",
+            "end_date": "2022-03-30",
+            "starting_set_count": 3,
+            "equipment": "Kettlebell",
+            "mass": 16,
+            "unilateral": true,
+            "reps_per_set": 5,
+            "set_duration": null,
+            "rest_duration": 60,
+            "increment_period": 86400,
+            "increment_frequency": 2,
+            "increment_step": 1,
+            "days": ["Tuesday", "Friday"]
+        },
+        {
+            "name": "Swings",
+            "start_date": "2022-03-28",
+            "end_date": "2022-03-30",
+            "starting_set_count": 3,
+            "equipment": "Kettlebell",
+            "mass": 16,
+            "unilateral": false,
+            "reps_per_set": 10,
+            "set_duration": null,
+            "rest_duration": 60,
+            "increment_period": 86400,
+            "increment_frequency": 2,
+            "increment_step": 1,
+            "days": ["Tuesday", "Friday"]
+        }
+    ]
+}
