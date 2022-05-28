@@ -1,3 +1,20 @@
+# folders to ignore
+## venv folder
+volume_cycles
+
+## generated assets
+generated
+
+## pycache folder
 */__pycache__
-*.pyc
+
+## obsidian folder
 .obsidian
+
+# files to ignore
+## python cache files
+*.pyc
+
+## pdf files
+*.pdf
+volume_cycles.code-workspace
